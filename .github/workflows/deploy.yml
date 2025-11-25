@@ -9,15 +9,18 @@ jobs:
     steps:
       - name: Get code
         uses: actions/checkout@v3
-      - name: Cache dependencies
-        id: cache
-        uses: actions/cache@v3
+
+      - name: Install deps with custom action
+        id: install
+        uses: ./.github/actions/install-deps
         with:
-          path: node_modules
-          key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
-      - name: Install dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: npm ci
+          cache-key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
+
+      - name: Show action outputs
+        run: |
+          echo "Cache hit? ${{ steps.install.outputs.cache-hit }}"
+          echo "Dependencies installed? ${{ steps.install.outputs.installed }}"
+
       - name: Lint code
         run: npm run lint
   test:

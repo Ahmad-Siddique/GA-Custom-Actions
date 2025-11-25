@@ -1,0 +1,38 @@
+name: "Install Dependencies with Cache"
+description: "Installs npm dependencies using cache and outputs result"
+inputs:
+  cache-key:
+    description: "Key to use for caching node_modules"
+    required: true
+outputs:
+  cache-hit:
+    description: "Whether cache was hit"
+  installed:
+    description: "Whether dependencies were installed"
+runs:
+  using: "composite"
+  steps:
+    - name: Cache dependencies
+      id: deps-cache
+      uses: actions/cache@v3
+      with:
+        path: node_modules
+        key: ${{ inputs.cache-key }}
+
+    - name: Install dependencies
+      if: steps.deps-cache.outputs.cache-hit != 'true'
+      run: |
+        npm ci
+        echo "installed=true" >> $GITHUB_OUTPUT
+      shell: bash
+
+    - name: Set installed=false when cache hit
+      if: steps.deps-cache.outputs.cache-hit == 'true'
+      run: |
+        echo "installed=false" >> $GITHUB_OUTPUT
+      shell: bash
+
+    - name: Output cache result
+      run: |
+        echo "cache-hit=${{ steps.deps-cache.outputs.cache-hit }}" >> $GITHUB_OUTPUT
+      shell: bash
