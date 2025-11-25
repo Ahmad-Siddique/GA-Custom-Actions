@@ -1,0 +1,10 @@
+name: "Important JS Action"
+description: "Runs a JS file and outputs a result"
+
+outputs:
+  result:
+    description: "Output from JS"
+
+runs:
+  using: "node20"
+  main: "index.js"
