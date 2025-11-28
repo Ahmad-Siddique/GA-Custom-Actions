@@ -111,7 +111,7 @@ jobs:
         id: important
         uses: ./.github/actions/important-action
         with:
-          bucket: my-frontend-site
+          bucket: hehe-testing-for-github-actions
           region: us-east-1
           dist-folder: dist
 
