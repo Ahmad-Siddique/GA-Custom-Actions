@@ -83,3 +83,39 @@ jobs:
         run: ls
       - name: Deploy site
         run: echo "Deploying..."
+  important-stuff:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get code
+        uses: actions/checkout@v3
+
+      - name: Download build files
+        uses: actions/download-artifact@v3
+        with:
+          name: dist-files
+          path: dist
+
+      - name: Install action deps
+        run: npm install
+        working-directory: ./.github/actions/important-action
+
+      - name: Configure AWS CLI
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Deploy to S3
+        id: important
+        uses: ./.github/actions/important-action
+        with:
+          bucket: my-frontend-site
+          region: us-east-1
+          dist-folder: dist
+
+      - name: Show deployed URL
+        run: |
+          echo "✅ Site Deployed At:"
+          echo "${{ steps.important.outputs.site-url }}"

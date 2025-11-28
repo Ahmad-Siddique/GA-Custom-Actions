@@ -1,9 +1,21 @@
-name: "Important JS Action"
-description: "Runs a JS file and outputs a result"
+name: "Deploy to S3"
+description: "Uploads dist folder to S3 and outputs deployed URL"
+
+inputs:
+  bucket:
+    description: "S3 bucket name"
+    required: true
+  region:
+    description: "AWS region"
+    required: true
+  dist-folder:
+    description: "Build folder path"
+    required: true
+    default: "dist"
 
 outputs:
-  result:
-    description: "Output from JS"
+  site-url:
+    description: "Public deployed website URL"
 
 runs:
   using: "node20"
